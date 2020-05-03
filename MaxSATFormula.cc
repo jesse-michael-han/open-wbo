@@ -90,6 +90,14 @@ void MaxSATFormula::addSoftClause(uint64_t weight, vec<Lit> &lits,
   n_soft++;
 }
 
+void MaxSATFormula::setSoftClausePartition(int partition) {
+  soft_clauses[soft_clauses.size() - 1]._partition = partition;
+}
+
+void MaxSATFormula::setHardClausePartition(int partition) {
+  hard_clauses[hard_clauses.size() - 1]._partition = partition;
+}
+
 int MaxSATFormula::nInitialVars() {
   return n_initial_vars;
 } // Returns the number of variables in the working MaxSAT formula.

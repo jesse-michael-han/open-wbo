@@ -51,6 +51,7 @@
 #include "MaxTypes.h"
 #include "ParserMaxSAT.h"
 #include "ParserPB.h"
+#include "ParserPartitions.h"
 
 // Algorithms
 #include "algorithms/Alg_LinearSU.h"
@@ -206,7 +207,7 @@ int main(int argc, char **argv) {
                  IntRange(0, 2));
 
     IntOption formula("Open-WBO", "formula",
-                      "Type of formula (0=WCNF, 1=OPB).\n", 0, IntRange(0, 1));
+                      "Type of formula (0=WCNF, 1=OPB, 2=PWCNF).\n", 0, IntRange(0, 2));
 
     IntOption weight(
         "WBO", "weight-strategy",
@@ -277,11 +278,15 @@ int main(int argc, char **argv) {
     if ((int)formula == _FORMAT_MAXSAT_) {
       parseMaxSATFormula(in, maxsat_formula);
       maxsat_formula->setFormat(_FORMAT_MAXSAT_);
-    } else {
+    } else if ((int)formula == _FORMAT_PB_){
       ParserPB *parser_pb = new ParserPB();
       parser_pb->parsePBFormula(argv[1], maxsat_formula);
       maxsat_formula->setFormat(_FORMAT_PB_);
+    } else {
+      parsePwcnfFormula(in, maxsat_formula);
+      maxsat_formula->setFormat(_FORMAT_PWCNF_);
     }
+    
     gzclose(in);
 
     printf("c |                                                                "
@@ -361,7 +366,6 @@ int main(int argc, char **argv) {
     S->setInitialTime(initial_time);
     mxsolver = S;
     mxsolver->setPrint(true);
-
     int ret = (int)mxsolver->search();
     delete S;
     return ret;

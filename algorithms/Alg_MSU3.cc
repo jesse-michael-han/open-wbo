@@ -177,7 +177,6 @@ StatusCode MSU3::MSU3_iterative() {
 
 // Public search method
 StatusCode MSU3::search() {
-
   if (maxsat_formula->getProblemType() == _WEIGHTED_) {
     if(print) {
       printf("Error: Currently algorithm MSU3 does not support weighted "

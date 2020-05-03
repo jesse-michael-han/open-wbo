@@ -68,6 +68,11 @@ public:
     relaxation_vars.clear();
   }
 
+  int getPartition() { return _partition; }
+
+
+  int _partition=-1;
+
   vec<Lit> clause;    //!< Soft clause
   uint64_t weight;    //!< Weight of the soft clause
   Lit assumption_var; //!< Assumption variable used for retrieving the core
@@ -82,7 +87,9 @@ public:
 
   Hard() {}
   ~Hard() { clause.clear(); }
+  int getPartition() { return _partition; }
 
+  int _partition=-1;  
   vec<Lit> clause; //!< Hard clause
 };
 
@@ -117,6 +124,9 @@ public:
 
   /*! Add a new soft clause. */
   void addSoftClause(uint64_t weight, vec<Lit> &lits);
+
+  void setSoftClausePartition(int partition);
+  void setHardClausePartition(int partition);
 
   /*! Add a new soft clause with predefined relaxation variables. */
   void addSoftClause(uint64_t weight, vec<Lit> &lits, vec<Lit> &vars);

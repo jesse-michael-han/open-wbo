@@ -46,7 +46,7 @@ public:
   const char* getMsg() const {return s.str().c_str();}
 };
 
-enum { _FORMAT_MAXSAT_ = 0, _FORMAT_PB_ };
+  enum { _FORMAT_MAXSAT_ = 0, _FORMAT_PB_ =1, _FORMAT_PWCNF_ = 3 };
 enum { _VERBOSITY_MINIMAL_ = 0, _VERBOSITY_SOME_ };
 enum { _UNWEIGHTED_ = 0, _WEIGHTED_ };
 enum { _WEIGHT_NONE_ = 0, _WEIGHT_NORMAL_, _WEIGHT_DIVERSIFY_ };
