@@ -28,6 +28,7 @@
 #include "MaxSAT.h"
 
 #include <sstream>
+#include <iostream>
 
 using namespace openwbo;
 
@@ -402,7 +403,7 @@ void MaxSAT::printUnsatisfiedSoftClauses() {
 
   std::stringstream s;
   int soft_size = 0;
-  
+
   for (int i = 0; i < maxsat_formula->nSoft(); i++) {
     bool unsatisfied = true;
     for (int j = 0; j < maxsat_formula->getSoftClause(i).clause.size(); j++) {
@@ -450,6 +451,47 @@ void MaxSAT::printStats() {
   printf("c\n");
 }
 
+void MaxSAT::serializeStats(int type) { // TODO: write Python bindings instead
+  if (print_json) {
+    FILE* res = fopen(getJsonFilename(), "wb");
+    auto totalTime = cpuTime();
+    float avgCoreSize = 0;
+    if (nbCores != 0)
+      avgCoreSize = (float)sumSizeCores / nbCores;
+    fprintf(res, "{\n");
+
+    fprintf(res, "\"rtime\" : %f,\n", totalTime - initialTime);
+    fprintf(res, "\"best_solution\" : %lu,\n", ubCost);
+    fprintf(res, "\"num_sat_calls\" : %d,\n", nbSatisfiable);
+    fprintf(res, "\"num_unsat_calls\" : %d,\n", nbCores);
+    fprintf(res, "\"avg_core_size\" : %f,\n", avgCoreSize);
+    fprintf(res, "\"num_symmetry_clauses\" : %d,\n", nbSymmetryClauses);
+
+    switch (type) {
+    case _SATISFIABLE_:
+      fprintf(res, "\"result\" : %s\n", "\"sat\"");
+      break;
+    case _OPTIMUM_:
+      fprintf(res, "\"result\" : %s\n", "\"opt\"");
+      break;
+    case _UNSATISFIABLE_:
+      fprintf(res, "\"result\" : %s\n", "\"unsat\"");
+      break;
+    case _UNKNOWN_:
+      fprintf(res, "\"result\" : %s\n", "null");
+      break;
+    default:
+      // printf("c Error: Invalid answer type.\n");
+      throw std::runtime_error("Invalid answer type");
+    }
+
+    fprintf(res, "}\n");
+    fflush(res);
+    fclose(res);
+  }
+  else return;
+}
+
 // Prints the corresponding answer.
 void MaxSAT::printAnswer(int type) {
   if (verbosity > 0 && print)
@@ -486,6 +528,7 @@ void MaxSAT::printAnswer(int type) {
   default:
     printf("c Error: Invalid answer type.\n");
   }
+  serializeStats(type);
 }
 
 uint64_t MaxSAT::getUB() {

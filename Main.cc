@@ -168,6 +168,8 @@ int main(int argc, char **argv) {
                         "Verbosity level (0=minimal, 1=more).\n", 0,
                         IntRange(0, 1));
 
+    StringOption json ("Open-WBO", "json", "JSON search statistics output destination\n", NULL);
+
     IntOption cpu_lim("Open-WBO", "cpu-lim",
                       "Limit on CPU time allowed in seconds.\n", 0,
                       IntRange(0, INT32_MAX));
@@ -220,7 +222,7 @@ int main(int argc, char **argv) {
         "WBO", "symmetry-limit",
         "Limit on the number of symmetry breaking clauses.\n", 500000,
         IntRange(0, INT32_MAX));
-
+   
     parseOptions(argc, argv, true);
 
     // Try to set resource limits:
@@ -363,7 +365,9 @@ int main(int argc, char **argv) {
       S->loadFormula(maxsat_formula);
     S->setPrintModel(printmodel);
     S->setPrintSoft((const char *)printsoft);
+    S->setJson((const char *) json);
     S->setInitialTime(initial_time);
+
     mxsolver = S;
     mxsolver->setPrint(true);
     int ret = (int)mxsolver->search();

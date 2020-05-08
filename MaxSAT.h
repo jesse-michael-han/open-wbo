@@ -29,6 +29,7 @@
 
 #ifndef MaxSAT_h
 #define MaxSAT_h
+#include <iostream>
 
 #ifdef SIMP
 #include "simp/SimpSolver.h"
@@ -81,6 +82,7 @@ public:
     print_soft = false;
     print = false;
     unsat_soft_file = NULL;
+    json_file = NULL;
   }
 
   MaxSAT() {
@@ -105,6 +107,7 @@ public:
     print_soft = false;
     print = false;
     unsat_soft_file = NULL;
+    json_file = NULL;
   }
 
   virtual ~MaxSAT() {
@@ -176,8 +179,20 @@ public:
       print_soft = true;
     }
   }
+
+  char * json_file;    
+
+  void setJson(const char* file) {
+    if (file){
+      json_file = (char*)malloc(sizeof(char) * (sizeof(file)));
+      strcpy(json_file,file);
+      print_json = true;
+    }
+  }  
+  
   bool isPrintSoft() { return print_soft; }
   char * getPrintSoftFilename() { return unsat_soft_file; }
+  char * getJsonFilename() { return json_file; }
 
   /** return status of current search
    *
@@ -239,7 +254,8 @@ protected:
   bool print_model;   // Controls if the model is printed at the end.
   bool print;         // Controls if data should be printed at all
   bool print_soft;    // Controls if the unsatified soft clauses are printed at the end.
-  char * unsat_soft_file;  // Name of the file where the unsatisfied soft clauses will be printed.
+  bool print_json = false;
+  char * unsat_soft_file;  // Name of the file where the unsatisfied soft clauses will be printed
 
   // Different weights that corresponds to each function in the BMO algorithm.
   std::vector<uint64_t> orderWeights;
@@ -256,6 +272,7 @@ protected:
   void printBound(int64_t bound); // Print the current bound.
   void printModel(); // Print the best satisfying model.
   void printStats(); // Print search statistics.
+  void serializeStats(int type);
   std::string printSoftClause(int id); // Prints a soft clause.
   void printUnsatisfiedSoftClauses(); // Prints unsatisfied soft clauses.
 
